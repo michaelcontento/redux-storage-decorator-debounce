@@ -22,7 +22,7 @@ This decorator will delay the expensive save operation for the given ms. Every
 new change to the state tree will reset the timeout!
 
 ```js
-import debounce from 'redux-storage'
+import debounce from 'redux-storage-decorator-debounce'
 
 engine = debounce(engine, 1500);
 ```
