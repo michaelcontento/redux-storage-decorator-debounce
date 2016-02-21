@@ -1,6 +1,6 @@
 # [redux-storage-decorator-debounce][]
 
-[![build](https://travis-ci.org/michaelcontento/redux-storage-decorator-debounce.svg)](https://travis-ci.org/michaelcontento/redux-storage-decorator-debounce)
+[![build](https://travis-ci.org/michaelcontento/redux-storage-decorator-debounce.svg?branch=master)](https://travis-ci.org/michaelcontento/redux-storage-decorator-debounce)
 [![dependencies](https://david-dm.org/michaelcontento/redux-storage-decorator-debounce.svg)](https://david-dm.org/michaelcontento/redux-storage-decorator-debounce)
 [![devDependencies](https://david-dm.org/michaelcontento/redux-storage-decorator-debounce/dev-status.svg)](https://david-dm.org/michaelcontento/redux-storage-decorator-debounce#info=devDependencies)
 
