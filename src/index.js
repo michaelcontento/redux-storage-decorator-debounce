@@ -1,5 +1,6 @@
-export default (engine, ms) => {
+export default (engine, ms, maxWait = null) => {
     let lastTimeout;
+    let maxTimeout;
     let lastReject;
 
     return {
@@ -7,17 +8,26 @@ export default (engine, ms) => {
 
         save(state) {
             clearTimeout(lastTimeout);
+
             if (lastReject) {
                 lastReject(Error('Debounced, newer action pending'));
                 lastReject = null;
             }
 
             return new Promise((resolve, reject) => {
-                lastReject = reject;
-                lastTimeout = setTimeout(() => {
+                const doSave = () => {
+                    clearTimeout(lastTimeout);
+                    clearTimeout(maxTimeout);
                     lastReject = null;
                     engine.save(state).then(resolve).catch(reject);
-                }, ms);
+                };
+
+                lastReject = reject;
+                lastTimeout = setTimeout(doSave, ms);
+
+                if (maxWait !== null && !maxTimeout) {
+                    maxTimeout = setTimeout(doSave, maxWait);
+                }
             });
         }
     };

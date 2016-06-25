@@ -20,6 +20,24 @@ describe('debounce', () => {
         setTimeout(() => { save.should.have.been.called; done(); }, 15);
     });
 
+    it('should override save with a minimum set', (done) => {
+        const save = sinon.stub().resolves();
+        const engine = debounce({ save }, 30, 160);
+
+        const saveEngine = () => {
+            engine.save({});
+        };
+
+        for (let i = 0; i < 300; i += 20) {
+            setTimeout(saveEngine, i);
+        }
+
+        setTimeout(() => {
+            save.should.have.been.calledOnce;
+            done();
+        }, 170);
+    });
+
     it('should reject waiting save calls if another comes in', async () => {
         const save = sinon.stub().resolves();
         const engine = debounce({ save }, 10);
