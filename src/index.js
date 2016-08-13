@@ -2,11 +2,32 @@ export default (engine, ms, maxWait = null) => {
     let lastTimeout;
     let maxTimeout;
     let lastReject;
+    let lastState;
+
+    let hasWindow = false;
+    try {
+        hasWindow = !!window;
+    } catch (err) {
+        // ignore error
+    }
+    if (hasWindow && window.addEventListener) {
+        window.addEventListener('beforeunload', () => {
+            if (!lastTimeout) {
+                return;
+            }
+
+            clearTimeout(lastTimeout);
+            clearTimeout(maxTimeout);
+            lastReject = null;
+            engine.save(lastState);
+        });
+    }
 
     return {
         ...engine,
 
         save(state) {
+            lastState = state;
             clearTimeout(lastTimeout);
 
             if (lastReject) {
@@ -19,6 +40,7 @@ export default (engine, ms, maxWait = null) => {
                     clearTimeout(lastTimeout);
                     clearTimeout(maxTimeout);
                     lastReject = null;
+                    lastState = null;
                     engine.save(state).then(resolve).catch(reject);
                 };
 

@@ -1,5 +1,18 @@
 import debounce from '../';
 
+const eventMap = {};
+global.window = {
+    addEventListener(name, cb) {
+        eventMap[name] = cb;
+    },
+
+    dispatchEvent(name) {
+        if (eventMap.hasOwnProperty(name)) {
+            eventMap[name]();
+        }
+    }
+};
+
 describe('debounce', () => {
     it('should proxy load to engine.load', async () => {
         const load = sinon.spy();
@@ -36,6 +49,40 @@ describe('debounce', () => {
             save.should.have.been.calledOnce;
             done();
         }, 170);
+    });
+
+    it('should save early on beforeunload', (done) => {
+        const save = sinon.stub().resolves();
+        const engine = debounce({ save }, 500);
+
+        engine.save({});
+        window.dispatchEvent('beforeunload');
+
+        setTimeout(() => {
+            save.should.have.been.calledOnce;
+            done();
+        }, 25);
+    });
+
+    it('should not self-trigger save on beforeunload', (done) => {
+        const save = sinon.stub().resolves();
+        debounce({ save }, 0);
+
+        window.dispatchEvent('beforeunload');
+
+        setTimeout(() => {
+            save.should.not.have.been.calledOnce;
+            done();
+        }, 25);
+    });
+
+    it('should not fail if window is missing', () => {
+        const oldWindow = global.window;
+        delete global.window;
+
+        debounce({ save: sinon.spy() }, 0);
+
+        global.window = oldWindow;
     });
 
     it('should reject waiting save calls if another comes in', async () => {
