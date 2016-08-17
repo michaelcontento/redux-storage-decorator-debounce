@@ -18,6 +18,8 @@ export default (engine, ms, maxWait = null) => {
 
             clearTimeout(lastTimeout);
             clearTimeout(maxTimeout);
+            lastTimeout = null;
+            maxTimeout = null;
             lastReject = null;
             engine.save(lastState);
         });
@@ -29,6 +31,7 @@ export default (engine, ms, maxWait = null) => {
         save(state) {
             lastState = state;
             clearTimeout(lastTimeout);
+            lastTimeout = null;
 
             if (lastReject) {
                 lastReject(Error('Debounced, newer action pending'));
@@ -39,6 +42,8 @@ export default (engine, ms, maxWait = null) => {
                 const doSave = () => {
                     clearTimeout(lastTimeout);
                     clearTimeout(maxTimeout);
+                    lastTimeout = null;
+                    maxTimeout = null;
                     lastReject = null;
                     lastState = null;
                     engine.save(state).then(resolve).catch(reject);
