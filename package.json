@@ -1,6 +1,6 @@
 {
   "name": "redux-storage-decorator-debounce",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "Delay and merge save opertations of redux-storage",
   "main": "build/index.js",
   "scripts": {
