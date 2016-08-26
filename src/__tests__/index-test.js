@@ -76,6 +76,26 @@ describe('debounce', () => {
         }, 25);
     });
 
+    it('should not self-trigger save if beforeunload is triggered after timeout is cleared', (done) => {
+        const save = sinon.stub().resolves();
+        const engine = debounce({ save }, 0);
+
+        engine.save({});
+
+        setTimeout(() => {
+            window.dispatchEvent('beforeunload');
+            save.should.have.been.calledOnce;
+            done();
+        }, 25);
+    });
+
+    it('should fail if ms is above maxMs', () => {
+        const save = sinon.stub().resolves();
+        const setup = () => debounce({ save }, 2, 1);
+
+        setup.should.throw(Error);
+    });
+
     it('should not fail if window is missing', () => {
         const oldWindow = global.window;
         delete global.window;
